@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class FlakesPage extends StatefulWidget {
+  const FlakesPage({super.key});
+
   @override
   _FlakesPageState createState() => _FlakesPageState();
 }

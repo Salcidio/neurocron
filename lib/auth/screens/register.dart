@@ -1,23 +1,76 @@
 // File: lib/screens/signin_screen.dart
+import 'package:flakesmobile/auth/providers/auth_provider.dart';
 import 'package:flakesmobile/auth/screens/login.dart';
 import 'package:flakesmobile/parts/customTextfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-class RegisterPage extends StatefulWidget {
+class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  ConsumerState<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _RegisterPageState extends ConsumerState<RegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _obscureText = true;
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
+  String? _emailError;
+  String? _passwordError;
+  String? _confirmPasswordError;
+
+  bool _validateEmail(String email) {
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+\$');
+    return emailRegex.hasMatch(email);
+  }
+
+  bool _validatePassword(String password) {
+    return password.length >= 8 && !_isCommonPassword(password);
+  }
+
+  bool _isCommonPassword(String password) {
+    const commonPasswords = [
+      '12345678',
+      'password',
+      '123456789',
+      'qwerty',
+      'abc123',
+    ];
+    return commonPasswords.contains(password);
+  }
+
+  void _onSubmit() {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
+
+    setState(() {
+      _emailError = _validateEmail(email) ? null : 'Invalid email address';
+      _passwordError =
+          _validatePassword(password)
+              ? null
+              : password.length < 8
+              ? 'Password must be at least 8 characters'
+              : 'Password is too common';
+      _confirmPasswordError =
+          (confirmPassword == password) ? null : 'Passwords do not match';
+    });
+
+    if (_emailError == null &&
+        _passwordError == null &&
+        _confirmPasswordError == null) {
+      ref.read(authProvider.notifier).signUp(email, password);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(isLoadingProvider);
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -36,7 +89,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 12),
                 Center(
                   child: Text(
-                    'Welcome to the future',
+                    'Welcome to the future\nFlake AI',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.notoSerif(fontSize: 30),
                   ),
@@ -50,8 +103,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       text: 'Facebook',
                       onTap: () {},
                     ),
-
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     _socialLoginButton(
                       icon: Icons.g_mobiledata,
                       text: 'Google',
@@ -75,20 +127,23 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _emailController,
                   hintText: 'Enter your email',
                   obscureText: false,
+                  errorText: _emailError,
                   iconData: Icons.account_box_rounded,
                 ),
                 const SizedBox(height: 16),
                 CustomTextField(
                   controller: _passwordController,
                   hintText: 'Enter your password',
-                  obscureText: false,
+                  obscureText: true,
+                  errorText: _passwordError,
                   iconData: Icons.password_outlined,
                 ),
                 const SizedBox(height: 20),
                 CustomTextField(
-                  controller: _passwordController,
+                  controller: _confirmPasswordController,
                   hintText: 'Confirm your password',
-                  obscureText: false,
+                  obscureText: true,
+                  errorText: _confirmPasswordError,
                   iconData: Icons.password_outlined,
                 ),
                 const SizedBox(height: 20),
@@ -103,11 +158,20 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       elevation: 2,
                     ),
-                    onPressed: () {},
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
+                    onPressed: isLoading ? null : _onSubmit,
+                    child:
+                        isLoading
+                            ? LoadingAnimationWidget.threeArchedCircle(
+                              color: Colors.white,
+                              size: 30,
+                            )
+                            : const Text(
+                              'Register',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
                   ),
                 ),
                 const SizedBox(height: 20),

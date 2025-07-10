@@ -28,8 +28,15 @@ class AuthNotifier extends StateNotifier<AuthModel> {
     } on AuthException catch (e) {
       // Handle error, maybe expose it in the state
       print(e.message);
+      state = state.copyWith(
+        isLoading: false,
+        error: "Algo correu mal .Por favor tente novamente",
+      );
     } finally {
-      state = state.copyWith(isLoading: false);
+      state = state.copyWith(
+        isLoading: false,
+        error: "Algo correu mal .Por favor tente novamente",
+      );
     }
   }
 
@@ -40,8 +47,13 @@ class AuthNotifier extends StateNotifier<AuthModel> {
         email: email,
         password: password,
       );
+      print(response);
     } on AuthException catch (e) {
       print(e.message);
+      state = state.copyWith(
+        isLoading: false,
+        error: "Algo correu mal .Por favor tente novamente",
+      );
     } finally {
       state = state.copyWith(isLoading: false);
     }

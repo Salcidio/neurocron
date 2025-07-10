@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AnimatedGradientButton extends StatefulWidget {
+  const AnimatedGradientButton({super.key});
+
   @override
   _AnimatedGradientButtonState createState() => _AnimatedGradientButtonState();
 }

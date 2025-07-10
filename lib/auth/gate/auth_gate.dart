@@ -1,7 +1,6 @@
 import 'package:flakesmobile/auth/providers/auth_provider.dart';
 import 'package:flakesmobile/auth/screens/home.dart';
 import 'package:flakesmobile/auth/screens/login.dart';
-import 'package:flakesmobile/auth/screens/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

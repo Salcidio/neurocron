@@ -1,16 +1,18 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+
 class AuthModel {
-  final User? user;
   final bool isLoading;
+  final String? error;
+  final User? user; // Replace with your User class
 
-  AuthModel({this.user, this.isLoading = false});
+  AuthModel({this.isLoading = false, this.error, this.user});
 
-  // A copyWith method allows easy state updates --snowFlake
-  AuthModel copyWith({User? user, bool? isLoading}) {
+  AuthModel copyWith({bool? isLoading, String? error, User? user}) {
     return AuthModel(
-      user: user ?? this.user,
       isLoading: isLoading ?? this.isLoading,
+      error: error ?? this.error,
+      user: user ?? this.user,
     );
   }
 }
