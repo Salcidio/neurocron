@@ -1,4 +1,5 @@
 // File: lib/screens/signin_screen.dart
+import 'package:flakesmobile/LLM/flakes.dart';
 import 'package:flakesmobile/auth/screens/register.dart';
 import 'package:flakesmobile/parts/customTextfield.dart';
 import 'package:flutter/material.dart';
@@ -123,9 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => RegisterPage(),
-                          ),
+                          MaterialPageRoute(builder: (context) => FlakesPage()),
                         );
                       },
                       child: const Text(
